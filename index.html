@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Table & Token — Board Game Shelf</title>
+<title>Gunjan Sir Ki Ho — Board Game Shelf</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -40,7 +40,6 @@
 
   a{ color:inherit; }
 
-  /* ---------- Header ---------- */
   header{
     display:flex;
     align-items:center;
@@ -57,13 +56,13 @@
   .logo{
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     letter-spacing: 0.01em;
     display:flex;
     align-items:center;
     gap:10px;
   }
-  .logo svg{ width:26px; height:26px; }
+  .logo svg{ width:26px; height:26px; flex-shrink:0; }
 
   nav{ display:flex; align-items:center; gap:28px; }
   nav .nav-links{ display:flex; gap:22px; font-size:0.92rem; }
@@ -111,7 +110,6 @@
     nav .nav-links{ display:none; }
   }
 
-  /* ---------- Hero ---------- */
   .hero{
     padding: 72px clamp(20px, 5vw, 64px) 56px;
     position: relative;
@@ -147,8 +145,8 @@
 
   h1{
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 4.6vw, 3.8rem);
-    line-height: 1.04;
+    font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+    line-height: 1.06;
     font-weight: 700;
     margin: 0 0 20px;
     color: var(--parchment);
@@ -194,7 +192,6 @@
   }
   .chip:focus-visible{ outline: 2px solid var(--brass-bright); outline-offset: 2px; }
 
-  /* ---------- Dice roller (signature element) ---------- */
   .roller{
     display:flex;
     flex-direction: column;
@@ -251,7 +248,6 @@
     html{ scroll-behavior: auto; }
   }
 
-  /* ---------- Shelf / Grid ---------- */
   .shelf-section{
     padding: 20px clamp(20px, 5vw, 64px) 90px;
     max-width: 1280px;
@@ -378,7 +374,6 @@
     font-size: 0.9rem;
   }
 
-  /* ---------- Modal ---------- */
   .modal-backdrop{
     position: fixed; inset:0;
     background: rgba(10,8,5,0.72);
@@ -492,6 +487,315 @@
 </style>
 </head>
 <body>
-    <h1>Gunjan sir ki ho</h1>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>
+    Gunjan Sir Ki Ho
+  </div>
+  <nav>
+    <div class="nav-links">
+      <a href="#shelf">The Shelf</a>
+      <a href="#" onclick="return false;">Game Nights</a>
+      <a href="#" onclick="return false;">About</a>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search" placeholder="Search the shelf…" aria-label="Search games">
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow">A shelf of good company</p>
+      <h1><em>Gunjan Sir Ki Ho</em><br>Board Game Shelf</h1>
+      <p class="lede">Eight games worth clearing the table for — sorted by mood, not marketing. Filter by what tonight calls for, or let the die decide.</p>
+      <div class="filter-row" id="filters">
+        <button class="chip active" data-filter="all">All Games</button>
+        <button class="chip" data-filter="Strategy">Strategy</button>
+        <button class="chip" data-filter="Party">Party</button>
+        <button class="chip" data-filter="Family">Family</button>
+        <button class="chip" data-filter="Cooperative">Cooperative</button>
+        <button class="chip" data-filter="Abstract">Abstract</button>
+      </div>
+    </div>
+
+    <div class="roller">
+      <div class="roller-label">Can't decide?</div>
+      <button class="die-btn" id="rollBtn" aria-label="Roll the die to pick a random game">
+        <svg id="dieFace" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="20" height="20" rx="4" fill="#2e2015" opacity="0.9"/>
+          <circle cx="12" cy="12" r="1.8" fill="#ede4d3"/>
+        </svg>
+      </button>
+      <div class="roller-result" id="rollResult">Roll to get a pick</div>
+    </div>
+  </div>
+</section>
+
+<section class="shelf-section" id="shelf">
+  <div class="shelf-heading">
+    <h2>The Shelf</h2>
+    <span class="shelf-count" id="shelfCount">8 games</span>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<footer>Gunjan Sir Ki Ho — for the nights the group can actually agree on a game.</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-cat" id="modalCat"></div>
+    <h2 id="modalTitle"></h2>
+    <p class="desc" id="modalDesc"></p>
+    <div class="modal-meta">
+      <div class="meta-card"><div class="val" id="modalPlayers"></div><div class="lbl">Players</div></div>
+      <div class="meta-card"><div class="val" id="modalTime"></div><div class="lbl">Playtime</div></div>
+      <div class="meta-card"><div class="val" id="modalAge"></div><div class="lbl">Ages</div></div>
+    </div>
+    <div class="roller-label" style="margin-bottom:8px;">Table complexity</div>
+    <div class="difficulty-track" id="modalDifficulty"></div>
+    <div style="margin-bottom:20px;"></div>
+    <div class="modal-tags" id="modalTags"></div>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  Strategy: `<svg viewBox="0 0 24 24" fill="none" stroke="#e2c06f" stroke-width="1.6"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"/></svg>`,
+  Party: `<svg viewBox="0 0 24 24" fill="none" stroke="#e2c06f" stroke-width="1.6"><path d="M4 21l4-9 9-9 3 3-9 9-9 4z"/><path d="M15 6l3 3"/></svg>`,
+  Family: `<svg viewBox="0 0 24 24" fill="none" stroke="#e2c06f" stroke-width="1.6"><circle cx="12" cy="8" r="3"/><path d="M6 21v-2a6 6 0 0112 0v2"/></svg>`,
+  Cooperative: `<svg viewBox="0 0 24 24" fill="none" stroke="#e2c06f" stroke-width="1.6"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/><path d="M11 12h2"/></svg>`,
+  Abstract: `<svg viewBox="0 0 24 24" fill="none" stroke="#e2c06f" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`
+};
+
+const SPINE_COLORS = {
+  Strategy: "#a63d40",
+  Party: "#c9a24b",
+  Family: "#4a7c6f",
+  Cooperative: "#5b7fa6",
+  Abstract: "#8a6bb0"
+};
+
+const games = [
+  {
+    title: "Harbor & Hearth",
+    category: "Strategy",
+    players: "2–4",
+    time: "60–90 min",
+    age: "12+",
+    difficulty: 3,
+    tags: ["Trading", "Route-building", "Medium-weight"],
+    desc: "Build docks, ferry goods between coastal towns, and out-maneuver rivals for the best trade routes. Easy to teach, hard to master once the map fills in."
+  },
+  {
+    title: "Loose Lips",
+    category: "Party",
+    players: "4–10",
+    time: "20–30 min",
+    age: "14+",
+    difficulty: 1,
+    tags: ["Bluffing", "Fast rounds", "Loud table"],
+    desc: "One player gives a one-word clue, everyone else has to guess who's lying about knowing the answer. Chaos guaranteed after the second round."
+  },
+  {
+    title: "Meadowlight",
+    category: "Family",
+    players: "1–5",
+    time: "30–45 min",
+    age: "8+",
+    difficulty: 2,
+    tags: ["Tile-laying", "Gentle competition", "Solo mode"],
+    desc: "Arrange garden tiles to attract pollinators before the season ends. Quiet, pretty, and just tense enough to keep everyone paying attention."
+  },
+  {
+    title: "Deep Cover",
+    category: "Cooperative",
+    players: "2–4",
+    time: "45 min",
+    age: "13+",
+    difficulty: 3,
+    tags: ["Hidden info", "Full team or bust", "Tense"],
+    desc: "Your crew has one shot to crack a vault before the shift change. Everyone sees a different half of the plan — say the wrong thing out loud and it's over."
+  },
+  {
+    title: "Knight's Orchard",
+    category: "Abstract",
+    players: "2",
+    time: "15–20 min",
+    age: "10+",
+    difficulty: 2,
+    tags: ["Head-to-head", "No luck", "Quick rematch"],
+    desc: "A tight two-player duel over a shrinking board. No dice, no cards — just position, and the growing realization you've been out-thought."
+  },
+  {
+    title: "Cinderfall",
+    category: "Strategy",
+    players: "2–5",
+    time: "90–120 min",
+    age: "14+",
+    difficulty: 4,
+    tags: ["Empire-building", "Long game", "High replay"],
+    desc: "Rebuild a fractured kingdom over four eras, balancing armies, treasuries, and the loyalty of nobles who all want different things."
+  },
+  {
+    title: "Snap Judgement",
+    category: "Party",
+    players: "3–8",
+    time: "15 min",
+    age: "10+",
+    difficulty: 1,
+    tags: ["Reflexes", "Card-flip", "Great warm-up"],
+    desc: "Flip, match, slap the pile — first one wrong takes the whole stack. A perfect five-minute game that somehow always runs for forty."
+  },
+  {
+    title: "Last Lighthouse",
+    category: "Cooperative",
+    players: "1–4",
+    time: "40–60 min",
+    age: "10+",
+    difficulty: 3,
+    tags: ["Survival", "Resource management", "Story-driven"],
+    desc: "Keep the light burning through a storm season with dwindling supplies. Every choice trades away something you'll need later."
+  }
+];
+
+const grid = document.getElementById('grid');
+const shelfCount = document.getElementById('shelfCount');
+let activeFilter = 'all';
+let searchTerm = '';
+
+function renderGrid(){
+  const filtered = games.filter(g => {
+    const matchesFilter = activeFilter === 'all' || g.category === activeFilter;
+    const matchesSearch = g.title.toLowerCase().includes(searchTerm) ||
+                           g.category.toLowerCase().includes(searchTerm) ||
+                           g.tags.some(t => t.toLowerCase().includes(searchTerm));
+    return matchesFilter && matchesSearch;
+  });
+
+  shelfCount.textContent = `${filtered.length} game${filtered.length === 1 ? '' : 's'}`;
+
+  if(filtered.length === 0){
+    grid.innerHTML = `<div class="no-results">Nothing on the shelf matches that. Try another search or filter.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(g => `
+    <div class="box" tabindex="0" role="button" data-title="${g.title}" aria-label="View details for ${g.title}">
+      <div class="box-spine" style="background:${SPINE_COLORS[g.category]}"></div>
+      <div class="box-face">
+        <div class="box-cat">${g.category}</div>
+        <div class="box-icon">${ICONS[g.category]}</div>
+        <h3>${g.title}</h3>
+        <p>${g.desc}</p>
+        <div class="box-stats">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d9cdb4" stroke-width="1.8"><circle cx="12" cy="8" r="3"/><path d="M6 21v-2a6 6 0 0112 0v2"/></svg>
+            ${g.players}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d9cdb4" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            ${g.time}
+          </span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.box').forEach(box => {
+    box.addEventListener('click', () => openModal(box.dataset.title));
+    box.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openModal(box.dataset.title); }
+    });
+  });
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.chip');
+  if(!btn) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  renderGrid();
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderGrid();
+});
+
+const backdrop = document.getElementById('modalBackdrop');
+function openModal(title){
+  const g = games.find(x => x.title === title);
+  if(!g) return;
+  document.getElementById('modalCat').textContent = g.category;
+  document.getElementById('modalTitle').textContent = g.title;
+  document.getElementById('modalDesc').textContent = g.desc;
+  document.getElementById('modalPlayers').textContent = g.players;
+  document.getElementById('modalTime').textContent = g.time;
+  document.getElementById('modalAge').textContent = g.age;
+  document.getElementById('modalDifficulty').innerHTML =
+    [1,2,3,4,5].map(i => `<span class="${i <= g.difficulty ? 'fill' : ''}"></span>`).join('');
+  document.getElementById('modalTags').innerHTML =
+    g.tags.map(t => `<span class="tag">${t}</span>`).join('');
+  backdrop.classList.add('open');
+  document.getElementById('modalClose').focus();
+}
+function closeModal(){ backdrop.classList.remove('open'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+backdrop.addEventListener('click', e => { if(e.target === backdrop) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+const rollBtn = document.getElementById('rollBtn');
+const rollResult = document.getElementById('rollResult');
+const dieFace = document.getElementById('dieFace');
+
+const pipLayouts = {
+  1: [[12,12]],
+  2: [[7,7],[17,17]],
+  3: [[7,7],[12,12],[17,17]],
+  4: [[7,7],[17,7],[7,17],[17,17]],
+  5: [[7,7],[17,7],[12,12],[7,17],[17,17]],
+  6: [[7,7],[17,7],[7,12],[17,12],[7,17],[17,17]]
+};
+function drawPips(n){
+  const pips = pipLayouts[n].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#ede4d3"/>`).join('');
+  dieFace.innerHTML = `<rect x="2" y="2" width="20" height="20" rx="4" fill="#2e2015" opacity="0.9"/>${pips}`;
+}
+
+rollBtn.addEventListener('click', () => {
+  rollBtn.classList.add('rolling');
+  rollResult.textContent = 'Rolling…';
+  let ticks = 0;
+  const interval = setInterval(() => {
+    drawPips(1 + Math.floor(Math.random() * 6));
+    ticks++;
+    if(ticks > 8){
+      clearInterval(interval);
+      rollBtn.classList.remove('rolling');
+      const pick = games[Math.floor(Math.random() * games.length)];
+      drawPips(1 + Math.floor(Math.random() * 6));
+      rollResult.textContent = pick.title;
+
+      document.querySelectorAll('.box').forEach(b => b.classList.remove('glow'));
+      document.querySelectorAll('.box').forEach(b => {
+        if(b.dataset.title === pick.title){
+          b.classList.add('glow');
+          b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+  }, 80);
+});
+
+renderGrid();
+</script>
+
 </body>
 </html>
